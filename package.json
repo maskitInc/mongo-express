@@ -1,7 +1,7 @@
 {
   "version": "0.40.0",
   "author": "https://github.com/mongo-express",
-  "name": "mongo-express",
+  "name": "ostrov-v3-0",
   "description": "Web-based admin interface for MongoDB",
   "keywords": [
     "admin",
@@ -45,6 +45,7 @@
     "method-override": "2.3.6",
     "mongodb": "2.2.24",
     "morgan": "1.7.0",
+    "pug": "^2.0.0-rc.1",
     "serve-favicon": "2.3.0",
     "swig-templates": "2.0.2",
     "update-notifier": "1.0.2"
