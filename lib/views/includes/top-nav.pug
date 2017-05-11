@@ -1,15 +1,15 @@
-.top-nav
-    .top-nav-content
-        .top-nav-logo
-            a(href='/')
-                span #{'ТОВ "Блакитна затока"'}
-        if (req.isAuthenticated())
-            .top-nav-menu
-                ul
-
-            .top-nav-dropdown.profile-dropdown-list
-                .top-nav-dropdown-content
-
-            .top-nav-dropdown-overall
-        else
-            .top-nav-menuвійти
+nav(class="navbar navbar-default navbar-fixed-top")
+    div(class="container")
+        div(class="navbar-header")
+            button(type="button", class="navbar-toggle collapsed", data-toggle="collapse", data-target="#navbar", aria-expanded="false", aria-controls="navbar")
+                span(class="sr-only") Toggle navigation<
+                span(class="icon-bar")
+                span(class="icon-bar")
+                span(class="icon-bar")
+            div(class="logo-nav")
+                a(href=baseHref)
+                    img(src=baseHref + "public/img/mongo-express-logo.png")
+            a(class="navbar-brand", href="") Mongo Express
+        div(id="navbar", class="navbar-collapse collapse")
+            ul(class="nav navbar-nav")
+                block breadcrumb

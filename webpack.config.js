@@ -23,7 +23,7 @@ const bootstrapPath = resolveModulePath('bootstrap');
 module.exports = {
   entry: {
     index: './lib/scripts/index.js',
-    database: './lib/scripts/news.js',
+    database: './lib/scripts/database.js',
     collection: './lib/scripts/collection.js',
     document: './lib/scripts/document.js',
     gridfs: './lib/scripts/gridfs.js',

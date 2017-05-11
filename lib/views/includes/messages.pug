@@ -1,0 +1,9 @@
+if messageSuccess
+    div(class="alert alert-success")
+        button(class="close", data-dismiss="alert") &times;
+        strong= messageSuccess
+
+if messageError
+    div(class="alert alert-danger")
+        button(class="close", data-dismiss="alert") &times;
+        strong= messageError

@@ -1,0 +1,188 @@
+extends layout
+block variables
+    - var title = 'Home'
+
+block head
+    link(href= baseHref + "public/css/bootstrap.min.css", rel="stylesheet")
+    link(href= baseHref + "public/css/bootstrap-theme.min.css", rel="stylesheet")
+    link(href= baseHref + "public/css/style.css", rel="stylesheet")
+    link(rel="prefetch", href=baseHref + "public/img/gears.gif")
+
+    style(type="text/css").
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+
+        .sidebar-nav a {
+            display: inline-block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .tooltip-inner {
+            max-width: 500px;
+        }
+
+block breadcrumb
+    li(class="dropdown")
+        a(class="dropdown-toggle", href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false") Database
+            span(class="caret")
+        ul(class="dropdown-menu")
+            each db in databases
+                li
+                    a(href=baseHref + 'db/' + db + '/',)= db
+
+block content
+    div(class="panel panel-default")
+        div(class="panel-heading")
+            h4(style="font-weight: bold;") Databases
+
+            unless settings.read_only
+                form(class="form-inline", method="POST", style="float:right;")
+                    input(class="form-control", type="text", id="database", name="database", placeholder="Database Name", title="Database Name")
+                    button(type="submit", class="btn btn-primary pull-right")
+                        span(class="glyphicon glyphicon-plus")
+                        | Create Database
+
+
+            div(class="panel-body no-padding")
+                table(class="table table-bordered table-striped table-condensed no-margin")
+                    each db in databases
+                        tr
+                            td(class="col-md-2")
+                                a(href=baseHref + 'db/' + db + '/', class="btn btn-success btn-block")
+                                    span(class="glyphicon glyphicon-eye-open")
+                                        br
+                                        | View
+                            td
+                                h3
+                                    a(href=baseHref + 'db/' + db + '/')= db
+                            unless settings.read_only
+                                td(class="col-md-2")
+                                    form(method="POST", id='db-' + db, action=baseHref + db, style="margin: 0px;")
+                                        input(type="hidden", name="_method", value="delete")
+                                        button(type="submit", class="hidden")
+                                    button(class="btn btn-danger btn-block deleteButton", database-name=db, childof='db-' + db)
+                                        span(class="glyphicon glyphicon-trash")
+                                            br
+                                            | Del
+    unless settings.read_only
+        div(id="confirm-deletion", class="modal fade", role="dialog", aria-labelledby="confirmDeletionLabel")
+            div(class="modal-dialog", role="document")
+                div(class="modal-content")
+                    div(class="modal-header")
+                        button(type="button", class="close", data-dismiss="modal")
+                            span(aria-hidden="true") &times;
+                        h4(class="modal-title", id="myModalLabel") Delete database
+                    div(class="modal-body")
+                        p Be careful! You are about to delete whole
+                            strong
+                                span(id="modal-database-name")
+                            |  database.
+                        p
+                            label(for="confirmation-input") Type the database name to proceed.
+                            input(type="text", id="confirmation-input", name="confirmation-input", shouldbe="", value="")
+                    div(class="modal-footer")
+                        button(type="button", data-dismiss="modal", class="btn", id="delete") Delete
+                        button(type="button", data-dismiss="modal", class="btn btn-primary") Cancel
+
+    if info == false
+        h2 Server Status
+        p Turn on admin in config.js to view server stats!
+    else
+        div(class="panel panel-default stats")
+            div(class="panel-heading")
+                h4(style="font-weight: bold;") Server Status
+            table(class="table table-bordered table-striped")
+                tr
+                    td(class="span2")
+                        strong Hostname
+                    td(class="span3", id="dbHost")= info.host
+                    td(class="span2")
+                        strong MongoDB Version
+                    td(class="span3", id="dbVersion")= info.version
+                tr
+                    td
+                        strong Uptime
+                    td= info.uptime + ' seconds '
+                        if info.uptime > 86400
+                          |  #{ '(' + Math.floor(info.uptime / 86400) + 'days)' }
+                    td(class="span2")
+                        strong Server Time
+                    td= info.localTime || date('r')
+                tr
+                    td(colspan="4") &nbsp;
+                tr
+                    td
+                        strong Current Connections
+                    td= info.connections.current
+                    td
+                        strong Available Connections
+                    td= info.connections.available
+                tr
+                    td
+                        strong Active Clients
+                    td= info.globalLock.activeClients.total
+                    td
+                        strong Queued Operations
+                    td= info.globalLock.currentQueue.total
+                tr
+                    td
+                        strong Clients Reading
+                    td= info.globalLock.activeClients.readers
+                    td
+                        strong Clients Writing
+                    td= info.globalLock.activeClients.writers
+                tr
+                    td
+                        strong Read Lock Queue
+                    td= info.globalLock.currentQueue.readers
+                    td
+                        strong Write Lock Queue
+                    td= info.globalLock.currentQueue.writers
+                //-tr
+                    td(colspan="4") &nbsp;
+                //-tr
+                    td
+                        strong Disk Flushes
+                    td #{info.backgroundFlushing.flushes}
+                    td
+                        strong Last Flush
+                    td= info.backgroundFlushing ? info.backgroundFlushing.last_finished || date('r') : ''
+                //-tr
+                    td
+                        strong Time Spent Flushing
+                    td= info.backgroundFlushing.total_ms
+                        | ms
+                    td
+                        strong Average Flush Time
+                    td= info.backgroundFlushing.average_ms
+                        | ms
+                tr
+                    td(colspan="4") &nbsp;
+                tr
+                    td
+                        strong Total Inserts
+                    td= info.opcounters.insert
+                    td
+                        strong Total Queries
+                    td= info.opcounters.query
+                tr
+                    td
+                        strong Total Updates
+                    td= info.opcounters.update
+                    td
+                        strong Total Deletes
+                    td= info.opcounters.delete
+
+
+block scripts
+    unless settings.read_only
+        script
+            include ../../scripts/index.js

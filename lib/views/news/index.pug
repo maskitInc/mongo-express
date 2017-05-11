@@ -1,4 +1,12 @@
 extends ../layouts/default
+block variables
+  - var title = 'ТОВ "Блакитна затока"'
 
 block main
   h1 #{'ТОВ "Блакитна затока"'}
+
+
+  p Be careful! You are about to delete whole
+    strong
+      span(id="modal-database-name")  &times;
+    |  database.

@@ -85,6 +85,3 @@ mongod
 *.ntvs*
 *.njsproj
 *.sln
-
-
-test
