@@ -1,0 +1,202 @@
+extends layout
+block variables
+    -
+        var title = collectionName
+        var mainPageLink = '/db'
+
+block styles
+    link(href= baseHref + "public/css/codemirror.css", rel="stylesheet")
+    if editorTheme != "default"
+        link(href= baseHref + "public/css/theme/" + editorTheme + ".css", rel="stylesheet")
+
+    style(type="text/css").
+        .CodeMirror-scroll {
+            height: 120px;
+            overflow: auto;
+        }
+
+        .modal-body .CodeMirror .CodeMirror-scroll {
+            height: auto;
+            min-height: 200px;
+            overflow-y: hidden;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .tab-pane > form {
+            padding-bottom: 5px;
+        }
+
+        .sorting-button {
+            white-space: nowrap;
+        }
+
+        @media (min-width: 992px) { /* meduim and up */
+            #advanced .form-group .btn {
+                height: 150px;
+            }
+        }
+
+        #indexes td {
+            vertical-align: middle;
+        }
+
+
+block breadcrumb
+    li
+        a(href=baseHref + 'db/' + dbName)
+            | Database:
+    li(class="dropdown")
+        a(class="dropdown-toggle", href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")= dbName
+            span(class="caret")
+        ul(class="dropdown-menu")
+            each db in databases
+                li
+                    a(href=baseHref + 'db/' + db + '/')= db
+    li
+        a(href=baseHref + 'db/' + dbName)
+            span(class="glyphicon glyphicon-chevron-right")
+    li
+        a(href=baseHref + 'db/' + dbName + '/' + collectionName || url_encode) Collection:
+            span(class="glyphicon glyphicon-chevron-right")
+    li(class="dropdown")
+        a(class="dropdown-toggle", href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false")= collectionName
+            span(class="caret")
+        ul(class="dropdown-menu")
+            each collection in collections
+                li
+                    a(href=baseHref + 'db/' + dbName + '/' + collectionName || url_encode)= collection
+
+
+block content
+    unless settings.read_only
+        p
+            button(type="button", data-toggle="modal", data-target="#addDocument", class="btn btn-success btn-large")
+                span(class="glyphicon glyphicon-pencil")
+                |  New Document
+            button(type="button", data-toggle="modal", data-target="#addIndex", class="btn btn-success btn-large")
+                span(class="glyphicon glyphicon-pencil")
+                |  New Index
+
+    ul(id="tabs", class="nav nav-pills nav-justified", data-tabs="tabs")
+        li.active
+            a(href='#simple', data-toggle='tab')
+                span(class="glyphicon glyphicon-tag")
+                |   Simple
+        li
+            a(href='#advanced', data-toggle='tab')
+                span(class="glyphicon glyphicon-tags")
+                |   Advanced
+
+    div(id="my-tab-content", class="tab-content")
+        div.active(class="tab-pane", id="simple")
+            form(class="well", method="get", action=baseHref + "db/" + dbName + "/" + collectionName || url_encode)
+                each column in columns
+                    if sort[column]
+                        input(type="checkbox", name="sort["+ column +"]", class="hide sort-"+ column, value=sort[column], checked="checked")
+                    else
+                        input(type="checkbox", name="sort[" + column + "]", class="hide sort-" + column)
+                div(class="row")
+                    div(class="form-group col-sm-6 col-md-4")
+                        input(style="width:100%;", class="input-medium form-control", type="text", id="key", name="key", placeholder="Key", title="Key", value=key)
+                    div(class="form-group col-sm-6 col-md-4")
+                        input(style="width:100%;", class="input-medium form-control", type="text", id="value", name="value", placeholder="Value", title="Value", value=value)
+                    div(class="form-group col-sm-6 col-md-2")
+                        select(name="type", class="form-control")
+                            if type == 'S'
+                                option(value="S") String
+                            else
+                                option(value="S", selected) String
+                            if type == 'S'
+                                option(value="R") Regex
+                            else
+                                option(value="R", selected) Regex
+                            if type == 'S'
+                                option(value="J") JSON, bool
+                            else
+                                option(value="J", selected) JSON, bool
+                            if type == 'S'
+                                option(value="N") Number
+                            else
+                                option(value="N", selected) Number
+                            if type == 'S'
+                                option(value="O") ObjectID
+                            else
+                                option(value="O", selected) ObjectID
+
+                    div(class="form-group col-sm-6 col-md-2")
+                        button(type="submit", class="btn btn-primary btn-block")
+                            span(class="glyphicon glyphicon-search")
+                            |  Find
+
+        div(class="tab-pane", id="advanced")
+            form(class="well", method="get", action=baseHref + "db/" + dbName + "/" + collectionName || url_encode)
+                each column in columns
+                    if sort[column]
+                        input(type="checkbox", name="sort[" + column + "]", class="hide sort-" + column, value=sort[column], checked="checked")
+                    else
+                        input(type="checkbox", name="sort[" + column + "]", class="hide sort-" + column)
+
+                div(class="row")
+                    div(class="form-group col-sm-6 col-md-5")
+                        textarea(class="input-medium form-control", style="width: 100%; height: 150px", id="query", name="query", placeholder="Query", title="Query")= query
+                    div(class="form-group col-sm-6 col-md-5")
+                        textarea(class="input-medium form-control", style="width: 100%; height: 150px", id="projection", name="projection", placeholder="Projection", title="Projection")= projection
+                    div(class="form-group col-md-2")
+                        button(style="height:150px;", type="submit", class="btn btn-primary btn-block")
+                            span(class="glyphicon glyphicon-search")
+                            |  Find
+
+
+
+
+
+    unless settings.read_only
+        p
+            form(id="deleteListForm", method="POST", style="display:inline;", action= baseHref + "db/" + dbName + "/" + collectionName || url_encode + "?key=" + key + "&value=" + value + "&type=" + type + "&query=" + query + "&projection=" + projection)
+                input(type="hidden", name="_method", value="delete")
+                button(type="button", data-toggle="modal", data-target="#deleteListModal", class="btn btn-danger btn-large btn-block")
+                    span(class="glyphicon glyphicon-trash")
+                    |  Delete all #{count} documents retrieved
+
+    br
+
+    if documents.length == 0
+        p(class="well") No documents found.
+
+
+
+
+
+    //-if pagination
+
+        - var hrefLink = baseHref + "db/" + dbName + "/" + collectionName || url_encode + "?skip="
+
+        if prev.skip < 0 || next.skip >= stats.count
+            - var disabled = true
+            - var prevLinkShow = true
+
+        ul(class="pager span7")
+            li(class="previous " + disabled ? 'disabled' : '')
+                for k, v in sort
+                    a(href=prevLinkShow ? hrefLink + "0&key=" + key + "&value=" + value + "&type=" + type + "&query=" + query + "&projection=" + projection +"&sort["+ k +"]=" + v  : '') &larr; First
+            li(class=disabled ? 'disabled' : '')
+            li(class=disabled ? 'disabled' : '')
+            li(class="next " + disabled ? 'disabled' : '')
+
+    div(class="fadeToWhite", id="fadeToWhiteID")
+    div(class="table-responsive tableWrapper")
+        table(class="table table-striped tableHeaderFooterBars")
+            thead
+                each column in columns
+                    th(class="sorting-button", data-column=column, data-direction=sort[column], title="Sort by " + column)
+                        #{column}
+                        if sort[column] == 1
+                            span(class="glyphicon glyphicon-triangle-top")
+                        else if sort[column] == -1
+                            span(class="glyphicon glyphicon-triangle-bottom")
+            each document in docs
+                tr(onclick="loadDocument("+ document._id || json || safe || url_encode +")")
+                    each column in columns
+                        td
+                            div(class="tableContent")

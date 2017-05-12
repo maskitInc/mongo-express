@@ -1,3 +1,4 @@
+block variables
 nav(class="navbar navbar-default navbar-fixed-top")
     div(class="container")
         div(class="navbar-header")
@@ -7,9 +8,9 @@ nav(class="navbar navbar-default navbar-fixed-top")
                 span(class="icon-bar")
                 span(class="icon-bar")
             div(class="logo-nav")
-                a(href=baseHref)
+                a(href=mainPageLink)
                     img(src=baseHref + "public/img/mongo-express-logo.png")
-            a(class="navbar-brand", href="") Mongo Express
+            a(class="navbar-brand", href=mainPageLink) Mongo Express
         div(id="navbar", class="navbar-collapse collapse")
             ul(class="nav navbar-nav")
                 block breadcrumb

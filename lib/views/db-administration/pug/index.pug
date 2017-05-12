@@ -1,33 +1,8 @@
 extends layout
 block variables
-    - var title = 'Home'
-
-block head
-    link(href= baseHref + "public/css/bootstrap.min.css", rel="stylesheet")
-    link(href= baseHref + "public/css/bootstrap-theme.min.css", rel="stylesheet")
-    link(href= baseHref + "public/css/style.css", rel="stylesheet")
-    link(rel="prefetch", href=baseHref + "public/img/gears.gif")
-
-    style(type="text/css").
-        body {
-            padding-top: 60px;
-            padding-bottom: 40px;
-        }
-
-        .sidebar-nav {
-            padding: 9px 0;
-        }
-
-        .sidebar-nav a {
-            display: inline-block;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .tooltip-inner {
-            max-width: 500px;
-        }
+    -
+        var title = 'Home'
+        var mainPageLink = '/db'
 
 block breadcrumb
     li(class="dropdown")
@@ -41,7 +16,8 @@ block breadcrumb
 block content
     div(class="panel panel-default")
         div(class="panel-heading")
-            h4(style="font-weight: bold;") Databases
+            div(style="display: inline-block;")
+                h4(style="font-weight: bold;") Databases
 
             unless settings.read_only
                 form(class="form-inline", method="POST", style="float:right;")
@@ -58,8 +34,8 @@ block content
                             td(class="col-md-2")
                                 a(href=baseHref + 'db/' + db + '/', class="btn btn-success btn-block")
                                     span(class="glyphicon glyphicon-eye-open")
-                                        br
-                                        | View
+                                    br
+                                    | View
                             td
                                 h3
                                     a(href=baseHref + 'db/' + db + '/')= db
@@ -70,8 +46,8 @@ block content
                                         button(type="submit", class="hidden")
                                     button(class="btn btn-danger btn-block deleteButton", database-name=db, childof='db-' + db)
                                         span(class="glyphicon glyphicon-trash")
-                                            br
-                                            | Del
+                                        br
+                                        | Del
     unless settings.read_only
         div(id="confirm-deletion", class="modal fade", role="dialog", aria-labelledby="confirmDeletionLabel")
             div(class="modal-dialog", role="document")
@@ -146,23 +122,27 @@ block content
                     td
                         strong Write Lock Queue
                     td= info.globalLock.currentQueue.writers
-                //-tr
+                tr
                     td(colspan="4") &nbsp;
-                //-tr
+                tr
                     td
                         strong Disk Flushes
-                    td #{info.backgroundFlushing.flushes}
+                    td
+                    //td= info.backgroundFlushing.flushes
                     td
                         strong Last Flush
-                    td= info.backgroundFlushing ? info.backgroundFlushing.last_finished || date('r') : ''
-                //-tr
+                    td
+                    //-td= info.backgroundFlushing ? info.backgroundFlushing.last_finished || date('r') : ''
+                tr
                     td
                         strong Time Spent Flushing
-                    td= info.backgroundFlushing.total_ms
+                    td ms
+                    //-td= info.backgroundFlushing.total_ms
                         | ms
                     td
                         strong Average Flush Time
-                    td= info.backgroundFlushing.average_ms
+                    td ms
+                    //-td= info.backgroundFlushing.average_ms
                         | ms
                 tr
                     td(colspan="4") &nbsp;
@@ -181,8 +161,7 @@ block content
                         strong Total Deletes
                     td= info.opcounters.delete
 
-
 block scripts
     unless settings.read_only
         script
-            include ../../scripts/index.js
+            include ../../../scripts/index.js

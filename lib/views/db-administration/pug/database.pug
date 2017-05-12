@@ -1,33 +1,8 @@
 extends layout
 block variables
-    - var title = dbName
-
-block head
-    link(href= baseHref + "public/css/bootstrap.min.css", rel="stylesheet")
-    link(href= baseHref + "public/css/bootstrap-theme.min.css", rel="stylesheet")
-    link(href= baseHref + "public/css/style.css", rel="stylesheet")
-    link(rel="prefetch", href=baseHref + "public/img/gears.gif")
-
-    style(type="text/css").
-        body {
-            padding-top: 60px;
-            padding-bottom: 40px;
-        }
-
-        .sidebar-nav {
-            padding: 9px 0;
-        }
-
-        .sidebar-nav a {
-            display: inline-block;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .tooltip-inner {
-            max-width: 500px;
-        }
+    -
+        var title = dbName
+        var mainPageLink = '/db'
 
 block breadcrumb
     li
@@ -44,7 +19,8 @@ block breadcrumb
 block content
     div(class="panel panel-default")
         div(class="panel-heading")
-            h4(style="font-weight: bold;") Collections
+            div(style="display: inline-block;")
+                h4(style="font-weight: bold;") Collections
 
             unless settings.read_only
                 form(class="form-inline", method="POST", style="float:right;")
@@ -61,18 +37,18 @@ block content
                             td(class="col-md-2")
                                 a(href= baseHref + 'db/' + dbName + '/' + c || url_encode, class="btn btn-success btn-block")
                                     span(class="glyphicon glyphicon-eye-open")
-                                        br
-                                        | View
+                                    br
+                                    | View
                             td(class="col-md-1")
                                 a(href= baseHref + 'db/' + dbName + '/export/' + c || url_encode, class="btn btn-warning btn-block")
                                     span(class="glyphicon glyphicon-floppy-save")
-                                        br
-                                        | Export
+                                    br
+                                    | Export
                             td(class="col-md-1")
                                 a(href= baseHref + 'db/' + dbName + '/expArr/' + c || url_encode, class="btn btn-warning btn-block")
                                     span(class="glyphicon glyphicon-floppy-save")
-                                        br
-                                        | Export
+                                    br
+                                    | Export
                             td(class="col-md-1")
                                 h3
                                     a(href= baseHref + 'db/' + dbName + '/' + c || url_encode)= c
@@ -83,8 +59,8 @@ block content
                                         button(type="submit", class="hidden")
                                     button(class="btn btn-danger btn-block deleteButton", database-name=db, childof='db-' + db)
                                         span(class="glyphicon glyphicon-trash")
-                                            br
-                                            | Del
+                                        br
+                                        | Del
     unless settings.read_only
         div(id="confirm-deletion", class="modal fade", role="dialog", aria-labelledby="confirmDeletionLabel")
             div(class="modal-dialog", role="document")
@@ -159,10 +135,6 @@ block content
                     td
                         strong Extents #
                     td= stats.numExtents
-
-
-
-
             if stats.extentFreeListNum
                 tr
                     td
@@ -186,7 +158,8 @@ block content
 
 
 
+
 block scripts
     unless settings.read_only
         script
-            include ../../scripts/database.js
+            include ../../../scripts/database.js

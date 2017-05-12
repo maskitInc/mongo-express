@@ -97,29 +97,29 @@
         {% for column in columns %}
           <input type="checkbox" name="sort[{{column}}]" class="hide sort-{{column}}" {% if sort[column] %}value="{{sort[column]}}" checked="checked"{% endif %}/>
         {% endfor %}
-      <div class="row">
-        <div class="form-group col-sm-6 col-md-4">
-          <input style="width:100%;" class="input-medium form-control" type="text" id="key" name="key" placeholder="Key" title="Key" value="{{ key }}">
+        <div class="row">
+          <div class="form-group col-sm-6 col-md-4">
+            <input style="width:100%;" class="input-medium form-control" type="text" id="key" name="key" placeholder="Key" title="Key" value="{{ key }}">
+          </div>
+          <div class="form-group col-sm-6 col-md-4">
+            <input style="width:100%;" class="input-medium form-control" type="text" id="value" name="value" placeholder="Value" title="Value" value="{{ value }}">
+          </div>
+          <div class="form-group col-sm-6 col-md-2">
+            <select name="type" class="form-control">
+              <option value="S" {% if type == 'S' %}selected {% endif %}>String</option>
+              <option value="R" {% if type == 'R' %}selected {% endif %}>Regex</option>
+              <option value="J" {% if type == 'J' %}selected {% endif %}>JSON, bool</option>
+              <option value="N" {% if type == 'N' %}selected {% endif %}>Number</option>
+              <option value="O" {% if type == 'O' %}selected {% endif %}>ObjectID</option>
+            </select>
+          </div>
+          <div class="form-group col-sm-6 col-md-2">
+            <button type="submit" class="btn btn-primary btn-block">
+              <span class="glyphicon glyphicon-search"></span>
+              Find
+            </button>
+          </div>
         </div>
-        <div class="form-group col-sm-6 col-md-4">
-          <input style="width:100%;" class="input-medium form-control" type="text" id="value" name="value" placeholder="Value" title="Value" value="{{ value }}">
-        </div>
-        <div class="form-group col-sm-6 col-md-2">
-          <select name="type" class="form-control">
-            <option value="S" {% if type == 'S' %}selected {% endif %}>String</option>
-            <option value="R" {% if type == 'R' %}selected {% endif %}>Regex</option>
-            <option value="J" {% if type == 'J' %}selected {% endif %}>JSON, bool</option>
-            <option value="N" {% if type == 'N' %}selected {% endif %}>Number</option>
-            <option value="O" {% if type == 'O' %}selected {% endif %}>ObjectID</option>
-          </select>
-        </div>
-        <div class="form-group col-sm-6 col-md-2">
-          <button type="submit" class="btn btn-primary btn-block">
-            <span class="glyphicon glyphicon-search"></span>
-            Find
-          </button>
-        </div>
-      </div>
       </form>
     </div>
     <div class="tab-pane" id="advanced">
@@ -265,7 +265,8 @@
       {% for document in docs %}
         <tr onclick="loadDocument('{{ document._id | json | safe | url_encode }}')">
           {% for column in columns %}
-            <td><div class="tableContent">
+            <td>
+              <div class="tableContent">
               {% if !settings.read_only && column === '_id' && collectionName !== 'system.indexes' %}
                 <form class="deleteButtonDocument" method="POST" style="display:inline;" action="{{ baseHref }}db/{{ dbName }}/{{ collectionName | url_encode }}/{{ document._id | json | safe | url_encode }}?skip={{ skip }}&key={{ key }}&value={{ value }}&type={{ type }}&query={{ query }}&projection= {{ projection }}">
                 <input type="hidden" name="_method" value="delete">
@@ -275,7 +276,8 @@
                 </form>
               {% endif %}
             {{ document[column] | stringDocIDs | to_display | safe }}
-            </div></td>
+            </div>
+            </td>
           {% endfor %}
         </tr>
       {% endfor %}
